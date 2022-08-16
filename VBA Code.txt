@@ -1,0 +1,105 @@
+Sub Mutipleyearstockdata():
+
+    For Each ws In Worksheets
+    
+        Dim WorksheetName As String
+        Dim i As Long
+        Dim j As Long
+        Dim Summarytablerow As Long
+        Dim LastRowA As Long
+        Dim Yearlychange As Double
+        Dim Percentchange As Double
+        Dim Total As String
+        
+        WorksheetName = ws.Name
+
+        ws.Cells(1, 9).Value = "Ticker"
+        ws.Cells(1, 10).Value = "Yearly Change"
+        ws.Cells(1, 11).Value = "Percent Change"
+        ws.Cells(1, 12).Value = "Total Stock Volume"
+        
+        Summarytablerow = 2
+        Total = 0
+        j = 2
+        
+        LastRowA = ws.Cells(Rows.Count, 1).End(xlUp).Row
+
+            For i = 2 To LastRowA
+                   
+                If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+                ws.Cells(Summarytablerow, 9).Value = ws.Cells(i, 1).Value
+                Yearlychange = ws.Cells(i, 6).Value - ws.Cells(j, 3).Value
+                ws.Cells(Summarytablerow, 10).Value = Yearlychange
+                    If ws.Cells(Summarytablerow, 10).Value < 0 Then
+                    ws.Cells(Summarytablerow, 10).Interior.ColorIndex = 3
+                    ElseIf ws.Cells(Summarytablerow, 10).Value > 0 Then
+                    ws.Cells(Summarytablerow, 10).Interior.ColorIndex = 4
+                    End If
+                Percentchange = ((ws.Cells(i, 6).Value - ws.Cells(j, 3).Value) / ws.Cells(j, 3).Value)
+                ws.Cells(Summarytablerow, 11).Value = Percentchange
+                ws.Cells(Summarytablerow, 11).NumberFormat = "0.00%"
+                Total = Total + ws.Cells(i, 7).Value
+                ws.Cells(Summarytablerow, 12).Value = Total
+                Summarytablerow = Summarytablerow + 1
+                j = i + 1
+                Total = 0
+                
+                Else
+                Total = Total + ws.Cells(i, 7).Value
+                ws.Cells(Summarytablerow, 12).Value = Total
+                
+                
+                End If
+            
+            Next i
+
+        Dim LastRowI As Long
+        Dim GreatestIncrease As Double
+        Dim GreatestDecrease As Double
+        Dim GreatesttotalVolume As Double
+
+        ws.Cells(1, 16).Value = "Ticker"
+        ws.Cells(1, 17).Value = "Value"
+        ws.Cells(2, 15).Value = "Greatest % Increase"
+        ws.Cells(3, 15).Value = "Greatest % Decrease"
+        ws.Cells(4, 15).Value = "Greatest Total Volume"
+        
+        LastRowI = ws.Cells(Rows.Count, 9).End(xlUp).Row
+        
+        GreatestIncrease = ws.Cells(2, 11).Value
+        GreatestDecrease = ws.Cells(2, 11).Value
+        GreatesttotalVolume = ws.Cells(2, 12).Value
+        
+            For i = 2 To LastRowI
+                If ws.Cells(i, 11).Value > GreatestIncrease Then
+                GreatestIncrease = ws.Cells(i, 11).Value
+                ws.Cells(2, 16).Value = ws.Cells(i, 9).Value
+                ws.Cells(2, 17).Value = GreatestIncrease
+                Else
+                GreatestIncrease = GreatestIncrease
+                End If
+                If ws.Cells(i, 11).Value < GreatestDecrease Then
+                GreatestDecrease = ws.Cells(i, 11).Value
+                ws.Cells(3, 16).Value = ws.Cells(i, 9).Value
+                ws.Cells(3, 17).Value = GreatestDecrease
+                Else
+                GreatestDecrease = GreatestDecrease
+                End If
+                If ws.Cells(i, 12).Value > GreatesttotalVolume Then
+                GreatesttotalVolume = ws.Cells(i, 12).Value
+                ws.Cells(4, 16).Value = ws.Cells(i, 9).Value
+                ws.Cells(4, 17).Value = GreatesttotalVolume
+                Else
+                GreatesttotalVolume = GreatesttotalVolume
+                End If
+            ws.Cells(2, 17).NumberFormat = "0.00%"
+            ws.Cells(3, 17).NumberFormat = "0.00%"
+            ws.Cells(4, 17).NumberFormat = "0.00E+0"
+            Next i
+
+        Worksheets(WorksheetName).Columns("I:Q").AutoFit
+            
+    Next ws
+        
+End Sub
+
